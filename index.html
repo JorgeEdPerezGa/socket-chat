@@ -14,22 +14,32 @@
     </style>
   </head>
   <body>
-
     <input id="username" placeholder="CREATE A USER">
     <button id="handleSubmit">SAVE</button>
     <h4 id="displayName"></h4>
-
+    <p id="type"></p>
     <ul id="messages"></ul>
-    <form action="">
+    <form id="form" action="">
       <input id="m" autocomplete="off" /><button>Send</button>
     </form>
     <script src="/socket.io/socket.io.js"></script>
     <script src="https://code.jquery.com/jquery-1.11.1.js"></script>
     <script>
-
+      var socket = io();
       handleSubmit.addEventListener('click', function() {
         const name = username.value;
         displayName.innerHTML = name;
+      })
+
+      form.addEventListener('keyup', function() {
+        const name = displayName.innerHTML;
+        
+        if(m.value !== ''){
+          type.innerHTML = '...';
+          return socket.emit('typing');
+        } else {
+          type.innerHTML = '';
+        }
       })
 
       $(function () {
@@ -42,6 +52,9 @@
         socket.on('chat message', function(msg){
           $('#messages').append($('<li>').text(msg));
         });
+        socket.on('typing', function(user){
+          type.innerHTML('...')
+        })
       });
     </script>
   </body>
